@@ -14,6 +14,7 @@
         var lastEvent = 0;
         var lastPosition = null;
         var currentSpeed = null;
+        var speeds = [];
 
         function updateLocation() {
             navigator.geolocation.getCurrentPosition(newPosition);
@@ -29,14 +30,27 @@
                     return;
                 }
                 if (position.timestamp - lastPosition.timestamp > 0) {
-                    var speedInKmPerHr = 3600 / (position.timestamp - lastPosition.timestamp) * distance;
+                    var speedInKmPerHr = 3600 / (position.timestamp - lastPosition.timestamp) * distance * 1000;
+                    var speedInMph = speedInKmPerHr * 0.621371;
                     console.log(distance + "KM");
-                    console.log(speedInKmPerHr + "km/hr");
-                    document.querySelector('#speed').textContent = speedInKmPerHr;
+                    console.log(speedInMph + "MPH");
+                    speeds.push(speedInMph);
+                    if (speeds.length > 10) {
+                        speeds.unshift();
+                    }
+                    document.querySelector('#speed').textContent = speedInMph + "MPH";
                 }
             }
             lastPosition = position;
             console.log(position);
+        }
+
+        function getAverageSpeed() {
+            var total = 0;
+            for (var i = 0; i < speeds.length; i++) {
+                total += speeds[i];
+            }
+            var avg = total / speeds.length;
         }
 
         function positionError(error) {
