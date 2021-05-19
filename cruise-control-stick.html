@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <div>V 0.5</div>
+    <div>V 0.6</div>
     <script type="text/javascript">
         var lastx = 0;
         var lasty = 0;
@@ -15,7 +15,8 @@
         var lastEvent = 0;
         var lastPosition = null;
         var currentSpeed = null;
-        var speeds = [100, 50];
+        var speeds = [];
+        var positions = [];
         //document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10).toString() + " MPH";
 
         function updateLocation() {
@@ -27,18 +28,29 @@
 
         function newPosition(position) {
             if (lastPosition !== null) {
+                //Accuracy too poor
+                if (position.coords.accuracy > 20) {
+                    return;
+                }
+
                 var distance = getDistanceFromLatLonInKm(lastPosition, position);
                 if (distance == 0) {
                     return;
                 }
                 if (position.timestamp - lastPosition.timestamp > 0) {
                     var speedInKmPerHr = 3600 / (position.timestamp - lastPosition.timestamp) * distance * 1000;
+                    //Too fast can't be right.
+                    if (speedInKmPerHr > 200) {
+                        return;
+                    }
                     var speedInMph = speedInKmPerHr * 0.621371;
-                    console.log(distance + "KM");
-                    console.log(speedInMph + "MPH");
                     speeds.push(speedInMph);
+                    positions.push(position);
                     if (speeds.length > 10) {
                         speeds.shift();
+                    }
+                    if (positions.length > 10) {
+                        positions.shift();
                     }
                     document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10).toString() + " MPH";
                 }
@@ -53,7 +65,19 @@
                 total += speeds[i];
             }
             var avg = total / speeds.length;
-            return avg;
+
+            if (positions.length > 1) {
+                var speed = getSpeedBetweenPositions(positions[0], positions[positions.length - 1]);
+            }
+
+            return speed;
+        }
+
+        function getSpeedBetweenPositions(position1, position2) {
+            var distance = getDistanceFromLatLonInKm(position1, position2);
+            var speedInKmPerHr = 3600 / (position2.timestamp - position1.timestamp) * distance * 1000;
+            var speedInMph = speedInKmPerHr * 0.621371;
+            return speedInMph;
         }
 
         function positionError(error) {
