@@ -16,7 +16,7 @@
         var lastPosition = null;
         var currentSpeed = null;
         var speeds = [100, 50];
-        document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10).toString() + " MPH";
+        //document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10).toString() + " MPH";
 
         function updateLocation() {
             navigator.geolocation.getCurrentPosition(newPosition);
