@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <div>V 0.1</div>
+    <div>V 0.2</div>
     <script type="text/javascript">
         var lastx = 0;
         var lasty = 0;
@@ -39,7 +39,7 @@
                     if (speeds.length > 10) {
                         speeds.unshift();
                     }
-                    document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10) + " MPH";
+                    document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10).toString() + " MPH";
                 }
             }
             lastPosition = position;
