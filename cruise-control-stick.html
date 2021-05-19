@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <div>V 0.2</div>
+    <div>V 0.3</div>
     <script type="text/javascript">
         var lastx = 0;
         var lasty = 0;
@@ -52,6 +52,7 @@
                 total += speeds[i];
             }
             var avg = total / speeds.length;
+            return avg;
         }
 
         function positionError(error) {
