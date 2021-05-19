@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <div>V 0.8</div>
+    <div>V 0.9</div>
     <script type="text/javascript">
         var lastx = 0;
         var lasty = 0;
@@ -30,7 +30,7 @@
             if (lastPosition !== null) {
                 //Accuracy too poor
                 console.log("Most Recent Accuracy: " + position.coords.accuracy);
-                if (position.coords.accuracy > 30) {
+                if (position.coords.accuracy > 100) {
                     return;
                 }
 
@@ -53,14 +53,16 @@
                     if (positions.length > 10) {
                         positions.shift();
                     }
-                    document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10).toString() + " MPH";
+                    document.querySelector('#speed1').textContent = (Math.round(getAverageSpeed1() * 10) / 10).toString() + " MPH";
+                    document.querySelector('#speed2').textContent = (Math.round(getAverageSpeed2() * 10) / 10).toString() + " MPH";
+                    document.querySelector('#speed3').textContent = (Math.round(getAverageSpeed3() * 10) / 10).toString() + " MPH";
                 }
             }
             lastPosition = position;
             console.log(position);
         }
 
-        function getAverageSpeed() {
+        function getAverageSpeed1() {
             var total = 0;
             for (var i = 0; i < speeds.length; i++) {
                 total += speeds[i];
@@ -81,6 +83,26 @@
             }
 
             return speed;
+        }
+
+        function getAverageSpeed2() {
+            if (positions[positions.length - 1].coords.speed === null) {
+                return -1;
+            }
+            var speedInKmPerHr = positions[positions.length - 1].coords.speed * 3600 / 1000;
+            var speedInMph = speedInKmPerHr * 0.621371;
+            return speedInMph;
+        }
+
+
+        function getAverageSpeed3() {
+            positions[positions.length - 1];
+            if (positions.length > 1) {
+                var speed = getSpeedBetweenPositions(positions[0], positions[positions.length - 1]);
+            }
+            var speedInKmPerHr = positions[positions.length - 1].coords.speed * 3600 / 1000;
+            var speedInMph = speedInKmPerHr * 0.621371;
+            return speedInMph;
         }
 
         function getSpeedBetweenPositions(position1, position2) {
@@ -157,7 +179,9 @@
     <div id="status">
 
     </div>
-    <div id="speed" style="font-size: 100pt;">0MPH</div>
+    <div id="speed1" style="font-size: 100pt;">0MPH</div>
+    <div id="speed2" style="font-size: 100pt;">0MPH</div>
+    <div id="speed3" style="font-size: 100pt;">0MPH</div>
     X: <span id="ax">?</span> Y: <span id="ay">?</span> Z: <span id="az">?</span> Z: <span id="msgs">?</span>
 
 </html>
