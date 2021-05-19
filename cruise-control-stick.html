@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <script type="text/javascript" src="riffwav.js"></script>
+    <script type="text/javascript" src="servo.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var lastx = 0;
+        var lasty = 0;
+        var lastz = 0;
+        var lastEvent = 0;
+        var lastPosition = null;
+        var currentSpeed = null;
+
+        function updateLocation() {
+            navigator.geolocation.getCurrentPosition(newPosition);
+            setTimeout(updateLocation, 500);
+        }
+        setTimeout(updateLocation, 500);
+        //navigator.geolocation.watchPosition(newPosition, positionError, {});
+
+        function newPosition(position) {
+            if (lastPosition !== null) {
+                var distance = getDistanceFromLatLonInKm(lastPosition, position);
+                if (distance == 0) {
+                    return;
+                }
+                if (position.timestamp - lastPosition.timestamp > 0) {
+                    var speedInKmPerHr = 3600 / (position.timestamp - lastPosition.timestamp) * distance;
+                    console.log(distance + "KM");
+                    console.log(speedInKmPerHr + "km/hr");
+                    document.querySelector('#speed').textContent = speedInKmPerHr;
+                }
+            }
+            lastPosition = position;
+            console.log(position);
+        }
+
+        function positionError(error) {
+            console.log(error);
+        }
+
+        window.ondevicemotion = function(event) {
+            return;
+            var threshold = 10;
+
+            var ax = event.accelerationIncludingGravity.x
+            var ay = event.accelerationIncludingGravity.y
+            var az = event.accelerationIncludingGravity.z
+
+            if (lastx == 0) {
+                lastx = Math.abs(ax);
+                lasty = Math.abs(ay);
+                lastz = Math.abs(az);
+            }
+
+            if (lastEvent > 0) {
+                lastEvent--;
+            }
+            if (lastEvent == 0 && (Math.abs(lastx - Math.abs(ax)) > threshold || Math.abs(lasty - Math.abs(ay)) > threshold || Math.abs(lastz - Math.abs(az)) > threshold)) {
+                document.querySelector('#msgs').append("Too much change");
+                ServoJs.moveTo(1, 0);
+                setTimeout(function() {
+                    ServoJs.moveTo(1, 100);
+                }, 400);
+
+                setTimeout(function() {
+                    ServoJs.moveTo(1, 0);
+                }, 800);
+                lastEvent = 20;
+            }
+
+            lastx = Math.abs(ax);
+            lasty = Math.abs(ay);
+            lastz = Math.abs(az);
+
+            document.querySelector('#ax').textContent = Math.round(ax * 100) / 100.0;
+            document.querySelector('#ay').textContent = Math.round(ay * 100) / 100.0;
+            document.querySelector('#az').textContent = Math.round(az * 100) / 100.0;
+        }
+
+        function getDistanceFromLatLonInKm(position1, position2) {
+            var lat1 = position1.coords.latitude;
+            var lon1 = position1.coords.longitude;
+            var lat2 = position2.coords.latitude;
+            var lon2 = position2.coords.longitude;
+            var R = 6371; // Radius of the earth in km
+            var dLat = deg2rad(lat2 - lat1); // deg2rad below
+            var dLon = deg2rad(lon2 - lon1);
+            var a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c; // Distance in km
+            return d;
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180)
+        }
+    </script>
+    <div id="status">
+
+    </div>
+    <div id="speed" style="font-size: x-large;"></div>
+    X: <span id="ax">?</span> Y: <span id="ay">?</span> Z: <span id="az">?</span> Z: <span id="msgs">?</span>
+
+</html>
