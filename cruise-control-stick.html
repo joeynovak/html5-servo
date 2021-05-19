@@ -39,7 +39,7 @@
                     if (speeds.length > 10) {
                         speeds.unshift();
                     }
-                    document.querySelector('#speed').textContent = speedInMph + "MPH";
+                    document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10) + " MPH";
                 }
             }
             lastPosition = position;
