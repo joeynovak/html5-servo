@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <div>V 0.3</div>
+    <div>V 0.4</div>
     <script type="text/javascript">
         var lastx = 0;
         var lasty = 0;
@@ -15,7 +15,8 @@
         var lastEvent = 0;
         var lastPosition = null;
         var currentSpeed = null;
-        var speeds = [];
+        var speeds = [100, 50];
+        document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10).toString() + " MPH";
 
         function updateLocation() {
             navigator.geolocation.getCurrentPosition(newPosition);
@@ -37,7 +38,7 @@
                     console.log(speedInMph + "MPH");
                     speeds.push(speedInMph);
                     if (speeds.length > 10) {
-                        speeds.unshift();
+                        speeds.shift();
                     }
                     document.querySelector('#speed').textContent = (Math.round(getAverageSpeed() * 10) / 10).toString() + " MPH";
                 }
