@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <div>V 0.7</div>
+    <div>V 0.8</div>
     <script type="text/javascript">
         var lastx = 0;
         var lasty = 0;
@@ -71,7 +71,7 @@
             for (var i = positions.length - 2; i >= 0; i--) {
                 if (firstPosition.timestamp - positions[i].timestamp > 2000) {
                     var speed = getSpeedBetweenPositions(positions[i], firstPosition);
-                    console.log("Returning speed for coordinates this many ms apart: " + firstPosition.timestamp - positions[i].timestamp);
+                    console.log("Returning speed for coordinates this many ms apart: " + (firstPosition.timestamp - positions[i].timestamp).toString());
                     return speed;
                 }
             }
